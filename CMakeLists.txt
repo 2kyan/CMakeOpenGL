@@ -4,13 +4,17 @@ Project(OpenGLScratch)
 
 set(LIBROOT $ENV{GITHUB})
 
+include_directories(include)
 include_directories(glad/include)
+include_directories(${LIBROOT}/glm)
 include_directories(${LIBROOT}/glfw/include)
 
 link_directories(${LIBROOT}/glfw/src/Debug)
 
 set(SRC 
-    src/OpenGLScratch.cpp
+    include/shader.h
+    src/shader.cpp
+    src/main.cpp
     glad/src/glad.c
 )
 
