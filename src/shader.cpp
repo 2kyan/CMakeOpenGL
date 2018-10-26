@@ -4,12 +4,73 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <unordered_map>
 
 #include "shader.h"
 
+const std::unordered_map<unsigned int, std::string> shaderNameString = {
+};
+
 Shader::Shader(const char* vs, const char* fs, const char* tcs, const char* tes, const char* gs)
 {
+    m_ShaderTable.clear();
+    m_ShaderNameTable.clear();
 
+    m_ShaderTable[GL_VERTEX_SHADER] = vs;
+    m_ShaderTable[GL_FRAGMENT_SHADER] = fs;
+    m_ShaderTable[GL_TESS_CONTROL_SHADER] = tcs;
+    m_ShaderTable[GL_TESS_EVALUATION_SHADER] = tes;
+    m_ShaderTable[GL_GEOMETRY_SHADER] = gs;
+
+    m_ShaderNameTable[GL_VERTEX_SHADER] = "vs";
+    m_ShaderNameTable[GL_FRAGMENT_SHADER] = "fs";
+    m_ShaderNameTable[GL_TESS_CONTROL_SHADER] = "tcs";
+    m_ShaderNameTable[GL_TESS_EVALUATION_SHADER] = "tes";
+    m_ShaderNameTable[GL_GEOMETRY_SHADER] = "gs";
+
+
+    loadShader();
+}
+
+void Shader::loadShader()
+{
+    const char* shaderCodePtr;
+    std::string shaderCode;
+    std::ifstream shaderFile;
+
+    ID = glCreateProgram();
+
+    for (auto info : m_ShaderTable)
+    {
+        if (info.second == nullptr) {
+            continue;
+        }
+
+        shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        try
+        {
+            // open files
+            shaderFile.clear();
+            shaderFile.open(info.second);
+            std::stringstream shaderStream;
+            shaderStream << shaderFile.rdbuf();
+            shaderFile.close();
+            shaderCode = shaderStream.str();
+        }
+        catch (std::ifstream::failure e)
+        {
+            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        }
+
+        shaderCodePtr = shaderCode.c_str();
+        unsigned int shaderID = glCreateShader(info.first);
+        glShaderSource(shaderID, 1, &shaderCodePtr, NULL);
+        glCompileShader(shaderID);
+        checkCompileErrors(shaderID, m_ShaderNameTable[info.first]);
+        glAttachShader(ID, shaderID);
+    }
+    glLinkProgram(ID);
+    checkCompileErrors(ID, "PROGRAM");
 }
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath)

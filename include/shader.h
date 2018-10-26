@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <unordered_map>
 
 class Shader
 {
@@ -27,6 +28,9 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
 private:
+    void loadShader();
     void checkCompileErrors(GLuint shader, std::string type);
+    std::unordered_map<unsigned int, const char*> m_ShaderTable;
+    std::unordered_map<unsigned int, std::string> m_ShaderNameTable;
 };
 #endif
