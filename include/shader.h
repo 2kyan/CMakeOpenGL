@@ -7,10 +7,17 @@
 
 class Shader
 {
+protected:
+    struct ShaderS {
+        bool valid;
+        std::string shader_fn;
+        std::string shader_code;
+        unsigned shader_id;
+    };
+
 public:
     unsigned int ID;
     Shader(const char* vs, const char* fs, const char* tcs = nullptr, const char* tes = nullptr, const char* gs = nullptr);
-    Shader(const char *vertexPath, const char *fragmentPath, const char *geometryPath = nullptr);
     // activate the shader
     // ------------------------------------------------------------------------
     void use();
@@ -30,7 +37,7 @@ public:
 private:
     void loadShader();
     void checkCompileErrors(GLuint shader, std::string type);
-    std::unordered_map<unsigned int, const char*> m_ShaderTable;
-    std::unordered_map<unsigned int, std::string> m_ShaderNameTable;
+protected:
+    std::unordered_map<unsigned int, ShaderS> m_shaderTable;
 };
 #endif

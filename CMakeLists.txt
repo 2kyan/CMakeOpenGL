@@ -11,8 +11,16 @@ include_directories(${LIBROOT}/glfw/include)
 
 link_directories(${LIBROOT}/glfw/src/Debug)
 
-set(SRC 
+set(INC 
+    include/rslib.h
+    include/texture.h
     include/shader.h
+)
+
+set(SRC 
+    ${INC}
+    src/rslib.cpp
+    src/texture.cpp
     src/shader.cpp
     src/main.cpp
     glad/src/glad.c
