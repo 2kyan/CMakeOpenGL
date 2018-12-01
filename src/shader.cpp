@@ -6,7 +6,10 @@
 #include <iostream>
 #include <unordered_map>
 
+#include <filesystem>
+
 #include "shader.h"
+#include "rslib.h"
 
 const std::unordered_map<unsigned int, std::string> shaderNameString = {
 };
@@ -16,15 +19,15 @@ Shader::Shader(const char* vs, const char* fs, const char* tcs, const char* tes,
     m_shaderTable.clear();
 
     ShaderS ss;
-    ss = { (vs != nullptr), std::string(vs ? vs : "")};
+    ss = { (vs != nullptr),  RSLib::instance()->getShaderFileName(vs)};
     m_shaderTable[GL_VERTEX_SHADER] = ss;
-    ss = { (fs != nullptr), std::string(fs ? fs : "")};
+    ss = { (fs != nullptr),  RSLib::instance()->getShaderFileName(fs)};
     m_shaderTable[GL_FRAGMENT_SHADER] = ss;
-    ss = { (tcs != nullptr), std::string(tcs ? tcs : "")};
+    ss = { (tcs != nullptr), RSLib::instance()->getShaderFileName(tcs)};
     m_shaderTable[GL_TESS_CONTROL_SHADER] = ss;
-    ss = { (tes != nullptr), std::string(tes ? tes : "")};
+    ss = { (tes != nullptr), RSLib::instance()->getShaderFileName(tes)};
     m_shaderTable[GL_TESS_EVALUATION_SHADER] = ss;
-    ss = { (gs != nullptr), std::string(gs ? gs : "")};
+    ss = { (gs != nullptr),  RSLib::instance()->getShaderFileName(gs)};
     m_shaderTable[GL_GEOMETRY_SHADER] = ss;
 
     loadShader();
@@ -43,10 +46,12 @@ void Shader::loadShader()
         if (info.second.valid == false) {
             continue;
         }
+        //std::cout << std::experimental::filesystem::current_path() << std::endl;
 
         shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         try
         {
+            
             // open files
             shaderFile.clear();
             shaderFile.open(info.second.shader_fn.c_str());

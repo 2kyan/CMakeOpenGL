@@ -46,7 +46,7 @@ RSLib::~RSLib()
 int RSLib::initResPaths()
 {
     char* envPath = nullptr;
-    std::vector<std::string> paths = { "./data", "../data" };
+    std::vector<std::string> paths = { "./data/", "../data/" };
     std::vector<std::string> resourceTypeStrings = { "shader/", "texture/" };
 
     std::unordered_map<std::string, std::string> envPaths = {
@@ -64,7 +64,7 @@ int RSLib::initResPaths()
     for (int i = 0; i < static_cast<int>(ResourceType::NUM_RESOURCES); ++i) {
         resPaths[i].clear();
         for (const auto& path : paths) {
-                resPath = path;
+            resPath = path;
             if (stat(resPath.c_str(), &buffer) == 0) {
                 resPaths[i].push_back(resPath);
             }
@@ -88,15 +88,22 @@ int RSLib::numResPaths()
 }
 
 std::string RSLib::getShaderFileName(const char* fileName) {
-    return getResourceFileName(fileName, ResourceType::SHADER);
+    if (fileName == nullptr)
+        return std::string();
+    else
+        return getResourceFileName(fileName, ResourceType::SHADER);
 }
 
 std::string RSLib::getTextureFileName(const char* fileName) {
-    return getResourceFileName(fileName, ResourceType::TEXTURE);
+    if (fileName == nullptr)
+        return std::string();
+    else
+        return getResourceFileName(fileName, ResourceType::TEXTURE);
 }
 
 std::string RSLib::getResourceFileName(const std::string& fileName, ResourceType resType)
 {
+    if (fileName == "") return std::string();
     struct stat buffer;
     for (const auto& resPath : resPaths[static_cast<int>(resType)]) {
         if (stat((resPath + fileName).c_str(), &buffer) == 0) {
